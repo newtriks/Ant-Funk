@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <title>@title@</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+
+    <!-- SWFObject js files -->
+    <script type="text/javascript" src="js/swfobject.js"></script>
+
+    <!-- Embed body -->
+    <script type="text/javascript">
+		
+        <!-- Flash Vars passed into Flex -->
+        var flashvars = {foo:"hello",foo2:"world"};
+
+        <!-- SWF params -->
+        var params = {
+        	allowfullscreen:"@allowfullscreen@",
+        	allownetworking: "@allownetworking@",
+        	allowscriptaccess: "@allowscriptaccess@",
+        	bgcolor: "@bgcolor@",
+        	devicefont: "@devicefont@",
+        	menu: "@menu@",
+        	play: "@play@",
+        	quality:"@quality@",
+        	salign:"@salign@",
+        	scale:"@scale@",
+        	seamlesstabbing:"@seamlesstabbing@",
+        	swliveconnect:"@swliveconnect@",
+        	wmode:"@wmode@"
+        };
+
+        <!-- SWF attributes -->
+        var attributes = {
+        	id: "@name@",
+        	name: "@name@",
+        	styleclass: "@styleclass@",
+        	align: "@align@"
+        };
+
+        <!-- Embed SWF into HTML using SWFObject -->
+        swfobject.embedSWF ( "@swf@", "@name@_div", "@width@", "@height@", "@version@", "@express-install@", flashvars, params, attributes );
+
+    </script>
+    <style>
+        
+        html{
+            height: 100%;
+        }
+        
+        body {
+            padding: 0;
+            margin: 0;
+            border: 0;
+            overflow: hidden;
+            background-color: @htmlbgcolor@;
+        }
+        
+        #swfContainer {
+            top: 20px;
+            left: 20px;
+            width: @width@;
+            height: @height@;
+            position: absolute;
+        }
+        
+    </style>
+</head>
+<body>
+<div id=swfContainer>
+	<div id="@name@_div">
+	    <a href="http://www.adobe.com/go/getflashplayer">
+	        <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif"
+	             alt="Get Adobe Flash player"/>
+	    </a>
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!-- ======================================================================
+     ANT Macrodef Build Script
+
+     - Compiles modules
+
+     Author: Newtriks <simon@newtriks.com>
+     Date :29th December 2009
+
+     Some of this script is based on portions of code written by:
+     
+     Constantiner<constantiner@gmail.com> and Cliff Hall <cliff@puremvc.org>
+     
+	====================================================================== -->
+<project>
+	    
+	<!-- = = = = = = = = = = = = = = = = =
+          macrodef: module.compile
+         = = = = = = = = = = = = = = = = = -->
+	<macrodef name="module.compile">
+	    
+		<attribute name="module-type" />
+	    <attribute name="module-path" />
+		<attribute name="module-name" />	
+		<attribute name="src"/>		
+		<attribute name="debug" default="false" />
+		<attribute name="in" default="@{src}/@{module-path}/@{module-name}.as"/>		
+		<attribute name="out" default="${release.modules.dir}/@{module-type}/@{module-name}.swf"/>	
+		<attribute name="config" default="${flex.config.xml}" />
+		
+		<sequential>
+			
+			<!-- Clean the output folder -->
+			<delete dir="@{out}" includes="*"/>
+			
+			<!-- Compile the modules -->
+			<mxmlc 	file="@{in}"
+					output="@{out}"
+					debug="@{debug}"
+					load-externs="${shell.report}"
+					show-unused-type-selector-warnings="false"
+					keep-all-type-selectors="true" >
+				
+				<!-- Module src path -->
+				<source-path path-element="@{src}"/>
+				
+				<!-- Get default flex compiler options. -->
+                <load-config filename="@{config}" />
+				
+				<!-- Externally linked Flex libraries -->
+				<compiler.external-library-path dir="${FLEX.SDK.FRAMEWORKS}" append="true">
+					<include name="libs/player/playerglobal.swc"/>
+					<include name="libs/datavisualization.swc" />
+					<include name="libs/flex.swc" />
+					<include name="locale/${locale}/framework_rb.swc" />
+					<include name="locale/${locale}/rpc_rb.swc" />
+					<include name="locale/${locale}/datavisualization_rb.swc" />
+				</compiler.external-library-path>
+				
+				<!-- Externally linked Third Party Library-->
+				<compiler.external-library-path dir="${lib.bin}">
+				     <include name="**/*.swc" />
+				</compiler.external-library-path>
+				    
+			</mxmlc>
+		
+			<echo>Succesfully built @{module-name} module</echo>
+		
+		</sequential>
+		
+	</macrodef>
+	
+</project>

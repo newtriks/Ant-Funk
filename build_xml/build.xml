@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<!-- ======================================================================
+     Flex ANT Build Script
+
+     - Deletes build directory
+     - Creates build and assets directories
+     - Copies framework and rpc RSL's to specified directories
+     - Compiles a third party libs swc
+     - Copies third party libs swc to specified directories
+     - Cleans up all trace statements and logging from src
+     - Compiles release swf
+     - Compiles module swf's
+     - Creates html wrappers for release using SWFObject template
+     - Copy assets across to release dir
+     - Launches HTML
+     
+     ** NOTES **
+
+     Each build will run the above tasks.
+
+     Author: Newtriks <simon@newtriks.com>
+     
+     Date :29th December 2009
+
+     Some of this script is based on portions of code written by:
+     
+     Constantiner<constantiner@gmail.com> and Cliff Hall <cliff@puremvc.org>
+     
+     ====================================================================== -->
+<project name="${PROJECT.NAME}" default="build">
+	
+	
+    <!-- Load previously defined configuration properties file -->
+    <property file="build.properties" />
+		
+    <!-- Load macrodef for create third party library -->
+	<property name="custom.lib.macro" location="ant/compile-custom-library.xml"/>
+  	<import file="${custom.lib.macro}"/>
+
+	<!-- Load macrodef for stripping logging -->
+	<property name="strip.logging.macro" location="ant/strip-logging.xml"/>
+  	<import file="${strip.logging.macro}"/>
+
+    <!-- Load macrodef for copying assets -->
+	<property name="copy.assets.macro" location="ant/copy-assets.xml"/>
+   	<import file="${copy.assets.macro}"/>
+
+	<!-- Load macrodef for compiling mxml -->
+	<property name="compile.mxml.macro" location="ant/compile-mxml.xml"/>
+    <import file="${compile.mxml.macro}"/>
+
+	<!-- Load macrodef for compiling module -->
+	<property name="compile.module.macro" location="ant/compile-module.xml"/>
+    <import file="${compile.module.macro}"/>
+
+	<!-- Load macrodef for building wrapper -->
+	<property name="make.html.macro" location="ant/build-wrapper.xml"/>
+    <import file="${make.html.macro}"/>
+	
+    <!-- flexTasks.jar copied to the libs folder to distribute with the project -->
+	<taskdef resource="flexTasks.tasks" classpath="${flex.tasks.jar}" />
+	
+	<!-- =================================
+	     target: build
+	     ================================= -->
+	<target name="build"
+			depends="clear,
+					 init,
+					 copy.flex.rsl,
+					 compile.integrated.lib,
+					 copy.integrated.rsl,
+					 strip.all.logging,
+					 compile.release,
+					 compile.modules,
+					 make.release.wrapper,
+					 copy.all.assets,
+					 launch.html"
+	            description="${PROJECT.FULLNAME}">
+    </target>
+	
+    <!-- - - - - - - - - - - - - - - - - -
+         target: clear
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clear">
+    	<tstamp>
+            <format property="build.datetime" pattern="dd/MM/yyyy hh:mm:ss aa" />
+        </tstamp>
+        <echo message="=============================================" />
+        <echo message="${PROJECT.NAME}-${PROJECT.VERSION} [${build.datetime}]" />
+        <echo message="Copyright (c) ${PROJECT.YEAR} ${PROJECT.OWNER}" />
+        <echo message="OS : ${os.name}" />
+        <echo message="Author: ${AUTHOR}" />
+        <echo message="==============================================" />
+        <delete dir="${build.dir}" failonerror="false" />
+    </target>
+	
+    <!-- - - - - - - - - - - - - - - - - -
+	     target: init
+	     - - - - - - - - - - - - - - - - - -->
+	<target name="init">
+		<mkdir dir="${build.dir}" />
+	    <mkdir dir="${release.build.dir}" />
+	    <mkdir dir="${release.modules.dir}" />
+	 </target>
+		
+	<!-- - - - - - - - - - - - - - - - - -
+	     target: copy.flex.rsl.assets
+	     - - - - - - - - - - - - - - - - - -->
+	<target name="copy.flex.rsl">
+		<copy.assets source="${release.build.dir}" destination="${FLEX.SDK.RSLS}" />
+	</target>
+	  	
+	<!-- - - - - - - - - - - - - - - - - -
+	     target: copy.integrated.rsl
+         - - - - - - - - - - - - - - - - - -->
+    <target name="copy.integrated.rsl">
+        <copy todir="${release.build.dir}" overwrite="true">
+            <fileset dir="${lib.bin}" includes="**/*"/>
+            <mapper type="regexp" from="(.*)library(.*)" to="\1PMVCModuleLibrary\2"/>
+	    </copy>
+	</target>
+	    
+	<!-- - - - - - - - - - - - - - - - - -
+	     target: copy.all.assets
+	     - - - - - - - - - - - - - - - - - -->
+	<target name="copy.all.assets">
+	     <copy.assets source="${assets.dir}" destination="${release.build.dir.assets}" />
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - -
+	     target: strip.all.logging
+	     - - - - - - - - - - - - - - - - - -->
+	<target name="strip.all.logging">
+	     <strip.logging source="${src.dir}" temporary="${temp.dir}" />
+	</target>
+		
+	<!-- - - - - - - - - - - - - - - - - -
+	     target: compile.integrated.lib
+	     - - - - - - - - - - - - - - - - - -->
+	<target name="compile.integrated.lib">
+		<comp.compile out="${lib.output.swc}"
+	                  link-report="${lib.report}" />
+    </target>
+	    
+	<!-- - - - - - - - - - - - - - - - - -
+	     target: compile.release
+	     - - - - - - - - - - - - - - - - - -->
+	<target name="compile.release">
+		<mxmlc.compile in="${main.application}"
+	        	       out="${main.application.release.out}"
+	            	   link-report="${shell.report}"
+					   use-network="${use.network}"
+					   incremental="${incremental.build }"/>
+	</target>
+	    
+	<!-- - - - - - - - - - - - - - - - - -
+	     target: compile.modules
+	     - - - - - - - - - - - - - - - - - -->
+	<target name="compile.modules">
+		<module.compile module-type="widget"
+						module-name="WidgetModule"
+						module-path="${module.path}"
+	        			src="${widget.module.dir}"/>
+	    <module.compile module-type="widget"
+						module-name="LoggerModule"
+						module-path="${module.path}"
+	        			src="${logger.module.dir}"/>
+	</target>
+	    
+	<!-- - - - - - - - - - - - - - - - - -
+	     target: make.release.wrapper
+	     - - - - - - - - - - - - - - - - - -->
+	 <target name="make.release.wrapper">
+	 	<make.wrapper output.dir="${release.build.dir}" 
+	 				  output.html="${output.release.html}" 
+	 				  swf="${output.swf.name}" 
+	 				  swf.width="${swf.width}" 
+	 				  swf.height="${swf.height}"/>
+	 </target>
+	
+	 <!-- - - - - - - - - - - - - - - - - -
+	      target: launch.swf
+	      - - - - - - - - - - - - - - - - - -->
+	 <target name="launch.swf">
+	 	<echo>Launching ${FLEX.SDK.PLAYER} and ${release.build.dir}/${output.swf.name}.swf</echo>
+	    <exec executable="open" vmlauncher="true" spawn="false" failonerror="true">
+	    	<arg line="-a '${FLEX.SDK.PLAYER}'" />
+	        <arg line="${release.build.dir}/${output.swf.name}.swf" />
+	    </exec>
+	 </target>
+	
+	 <!-- - - - - - - - - - - - - - - - - -
+	      target: launch.html
+	      - - - - - - - - - - - - - - - - - -->
+	 <target name="launch.html">
+	 <echo>Launching application in browser</echo>
+	 	<exec executable="open" vmlauncher="true" spawn="false" failonerror="true">
+	    	<arg line="-a '${firefox}'" />
+	        <arg line="${output.release.html}" />
+	    </exec>
+	 </target>
+	
+</project>

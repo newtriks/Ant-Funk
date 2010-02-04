@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!-- ======================================================================
+     ANT Macrodef Build Script
+
+     - Copies assets to a defined destination
+
+     Author: Newtriks <simon@newtriks.com>
+     Date :29th December 2009
+
+     Some of this script is based on portions of code written by:
+     
+     Constantiner<constantiner@gmail.com> and Cliff Hall <cliff@puremvc.org>
+     
+	====================================================================== -->
+<project>
+	    
+	<!-- = = = = = = = = = = = = = = = = =
+	     macrodef: copy.assets
+	     = = = = = = = = = = = = = = = = = -->
+	<macrodef name="copy.assets">
+	        
+		<attribute name="source" />
+	    <attribute name="destination" />   
+	        
+		<sequential>
+				
+			<!-- Delete an existing directory -->
+			<delete dir="@{destination}" includes="*"/>
+					
+			<!-- Create directory -->
+			<mkdir dir="@{destination}" />
+	
+			<!-- Copy the assets across [maybe no assets so don't fail] -->
+			<copy todir="@{destination}" overwrite="true" failonerror="false">
+			    <fileset dir="@{source}" includes="**/*" />
+			</copy>
+				
+		    <echo>Succesfully copied assets from @{source} to @{destination}</echo>
+	        
+		</sequential>
+	
+	</macrodef>
+	
+</project>

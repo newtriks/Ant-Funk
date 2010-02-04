@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!-- ======================================================================
+     ANT Macrodef Build Script
+
+     - Compiles mxml
+
+     Author: Newtriks <simon@newtriks.com>
+     Date :29th December 2009
+
+     Some of this script is based on portions of code written by:
+     
+     Constantiner<constantiner@gmail.com> and Cliff Hall <cliff@puremvc.org>
+     
+	====================================================================== -->
+<project>
+	    
+	<!-- = = = = = = = = = = = = = = = = =
+		macrodef: mxmlc.compile
+		= = = = = = = = = = = = = = = = = -->
+	<macrodef name="mxmlc.compile">
+		
+		<attribute name="in" />
+		<attribute name="out" />
+		<attribute name="link-report" />
+		<attribute name="use-network" />       
+		<attribute name="config" default="${flex.config.xml}" />
+		<attribute name="additional" default="" />
+		<attribute name="incremental" default="true" />
+		<attribute name="debug" default="false" />
+		<attribute name="locale" default="en_US" />       
+		<attribute name="use-static" default="false" />       
+		
+		<sequential>
+			        	
+			<!-- Clean the output folder -->
+			<delete dir="@{out}" includes="*"/>
+				
+			<mxmlc  file="@{in}"
+			        output="@{out}"
+			        fork="true"
+			        debug="@{debug}"
+			        maxmemory="1024m"
+			        locale="@{locale}"
+					use-network="@{use-network}"
+			        link-report="@{link-report}"
+			        incremental="@{incremental}"
+			        keep-all-type-selectors="true"
+			        target-player="${swf.version.full}"
+			        keep-generated-actionscript="false"
+			        show-unused-type-selector-warnings="false"
+			        actionscript-file-encoding="${default.encoding}"
+			        static-link-runtime-shared-libraries="@{use-static}">
+			
+			        <!-- Get default flex compiler options. -->
+			        <load-config filename="@{config}" />
+							
+			        <!-- Main src directory -->
+			        <compiler.source-path path-element="${src.dir}" />
+			            	
+			        <!-- Framework RSL linked libraries -->
+			        <runtime-shared-library-path path-element="${flex.framework.swc}">
+			           <url rsl-url="${flex.framework.rsl}.swz" />
+			           <url policy-file-url="" />
+			           <url rsl-url="${flex.framework.rsl}.swf" />
+					</runtime-shared-library-path>
+			            	
+			        <!-- RPC RSL linked libraries -->
+			        <runtime-shared-library-path path-element="${flex.rpc.swc}">
+			        	<url rsl-url="${flex.rpc.rsl}.swz" />
+			        	<url policy-file-url="" />
+			        	<url rsl-url="${flex.rpc.rsl}.swf" />
+			        </runtime-shared-library-path>
+
+			        <!-- Third Party RSL linked libraries -->
+				    <runtime-shared-library-path path-element="${lib.output.swc}">
+			        	 <url rsl-url="PMVCModuleLibrary.swf" />
+			        </runtime-shared-library-path>
+			            	
+			        <!-- Externally linked libraries -->
+			        <compiler.external-library-path dir="${FLEX.SDK.FRAMEWORKS}" append="true">
+			        	<include name="libs/player/playerglobal.swc"/>
+			        </compiler.external-library-path>
+			           		
+					<!-- Force include resources -->
+					<compiler.include-libraries dir="${FLEX.SDK.FRAMEWORKS}" append="true">
+						<include name="libs/datavisualization.swc" />
+						<include name="locale/${locale}/datavisualization_rb.swc" />
+					</compiler.include-libraries>
+			
+			        <!-- SWF dimensions -->
+			        <default-size width="${swf.width}" height="${swf.height}" />
+				
+			</mxmlc>
+			
+			<echo>Succesfully compiled @{in} to @{out}</echo>
+			
+		</sequential>
+		
+	</macrodef>
+	
+</project>

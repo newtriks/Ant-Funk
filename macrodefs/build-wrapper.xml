@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!-- ======================================================================
+     ANT Macrodef Build Script
+
+     - Builds HTML wrapper
+
+     Author: Newtriks <simon@newtriks.com>
+     Date: 4th January 2010
+
+     Majority of this script is based on code written by:
+     
+     Pedr Browne <pedr.browne@gmail.com>
+     
+	====================================================================== -->
+<project>
+	
+    <!-- = = = = = = = = = = = = = = = = =
+          macrodef: make.wrapper
+         = = = = = = = = = = = = = = = = = -->
+	<macrodef name="make.wrapper">
+	        
+	    <attribute name="swf"/>
+	    <attribute name="swf.width" default=""/>
+	    <attribute name="swf.height" default=""/>
+	    <attribute name="swf.width.percent" default=""/>
+	    <attribute name="swf.height.percent" default=""/>
+	    <attribute name="output.dir"/>
+	    <attribute name="output.html"/>
+	   	
+    	<sequential>
+    		
+    		<copy todir="@{output.dir}">
+    			<fileset dir="${templates.dir}">
+    				<exclude name="**/${wrapper.template.name}" />
+  	            </fileset>
+    		</copy>
+    		
+    		<copy file="${templates.dir}/${wrapper.template.name}" tofile="@{output.html}" overwrite="true">
+    			<filterchain>
+    				<replacetokens>	   		
+    					
+    				 	<token key="title" value="${PROJECT.FULLNAME}"/>
+    					<token key="version" value="${swf.version.full}"/>
+    					<token key="width" value="@{swf.width}@{swf.width.percent}"/>
+    					<token key="height" value="@{swf.height}@{swf.width.percent}"/>
+    					<token key="name" value="${APPLICATION.NAME}"/>
+    					<token key="swf" value="@{swf}.swf"/>
+    					<token key="allowfullscreen" value="${params.allowfullscreen.bool}"/>
+    					<token key="express-install" value="${express.install}"/>
+    			    	<token key="allownetworking" value="${params.allownetworking.bool}"/>
+    					<token key="allowscriptaccess" value="${params.allowscriptaccess.bool}"/>
+    			    	<token key="base" value="${params.base.dir}"/>
+    			    	<token key="bgcolor" value="${params.bgcolor}"/>
+    			    	<token key="htmlbgcolor" value="${html.background.color}" />
+    			    	<token key="devicefont" value="${params.devicefont.bool}" />
+    					<token key="menu" value="${params.menu.bool}"/>
+    					<token key="play" value="${params.play.bool}"/>
+    					<token key="quality" value="${params.quality}"/>
+    					<token key="salign" value="${params.salign}"/>    					
+    					<token key="scale" value="${params.scale}"/>
+    					<token key="seamlesstabbing" value="${params.seamlesstabbing.bool}"/>
+    					<token key="swliveconnect" value="${params.swliveconnect.bool}"/>
+    					<token key="wmode" value="${params.wmode}"/>
+    					<token key="styleclass" value="${attributes.styleclass}"/>
+    					<token key="align" value="${attributes.align}"/>
+    					
+    				</replacetokens>
+    			</filterchain>
+    		</copy>
+    		
+    		<echo>Succesfully wrapped @{swf}.swf into @{output.html} using template: ${wrapper.template}</echo>
+    		
+    	</sequential>
+    	
+	</macrodef>
+	
+</project>
