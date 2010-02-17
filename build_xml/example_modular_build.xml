@@ -107,7 +107,7 @@
 	     target: copy.flex.rsl.assets
 	     - - - - - - - - - - - - - - - - - -->
 	<target name="copy.flex.rsl">
-		<copy.assets source="${release.build.dir}" destination="${FLEX.SDK.RSLS}" />
+		<copy.assets source="${FLEX.SDK.RSLS}" destination="${release.build.dir}" />
 	</target>
 	  	
 	<!-- - - - - - - - - - - - - - - - - -
