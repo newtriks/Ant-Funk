@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!-- ======================================================================
+     Flex ANT Test Runner Script
+
+     Author: Newtriks <simon@newtriks.com>
+     
+     Date: 14th January 2010   
+     
+     Macrodefs Tested:
+     
+     1) copy-assets.xml
+     2) strip-traces.xml
+     
+     Notes:
+     
+     - Install AntUnit http://ant.apache.org/antlibs/antunit/ 
+     - Build with AntUnit 1.1
+ 	 - Check that the implementing library exists in one of:
+        > /usr/share/ant/lib
+        > /Volumes/Users/[your username]/.ant/lib
+        > a directory added on the command line with the -lib argument
+
+     ====================================================================== -->
+
+<project name="test-suite" default="test.suite">
+
+    <!-- Run all tests -->
+    <target name="test.suite">
+        <ant antfile="../tests/test-copy-assets.xml" /> 
+        <ant antfile="../tests/test-strip-traces.xml" /> 
+    </target>
+  
+</project>

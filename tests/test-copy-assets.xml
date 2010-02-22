@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!-- ======================================================================
+     Test Runner Script - Coppy Assets
+
+     Author: Newtriks <simon@newtriks.com>
+     
+     Date: 14th January 2010   
+     
+     Tests Run:
+     
+     - copy-assets.xml
+     
+     Notes:
+     
+     - Install AntUnit http://ant.apache.org/antlibs/antunit/ 
+     - Build with AntUnit 1.1
+ 	 - Check that the implementing library exists in one of:
+        > /usr/share/ant/lib
+        > /Volumes/Users/[your username]/.ant/lib
+        > a directory added on the command line with the -lib argument
+
+     ====================================================================== -->
+
+<project name="antunit-base-test" default="run.copy-assets.test" 
+		 xmlns:au="antlib:org.apache.ant.antunit">
+
+    <!-- Load macrodef for copying assets -->
+	<property name="copy.assets.macro" location="../macrodefs/copy-assets.xml"/>
+   	<import file="${copy.assets.macro}"/>
+    
+    <!-- Run test target initiate -->
+    <target name="run.copy-assets.test">
+        <au:antunit>
+            <fileset file="${ant.file}"/>
+            <au:plainlistener/>
+        </au:antunit>
+    </target>
+    
+    <!-- Setup called prior to copy-assets test -->
+    <target name="setUp">
+        <property name="source_assets" value="source_assets"/>
+        <property name="copied_assets" value="copied_assets"/>
+        <property name="foo" value="${source_assets}/foo"/>
+        <touch file="${foo}" mkdirs="true"/>
+    </target>
+
+    <!-- Test case for copy-assets -->
+    <target name="testCopyAssets">
+        <copy.assets source="${source_assets}" destination="${copied_assets}" />
+        <au:assertFileExists file="${copied_assets}/foo"/>
+    </target>
+    
+    <!-- Teardown called following copy-assets -->
+    <target name="tearDown">
+        <delete dir="${source_assets}" quiet="true"/>
+        <delete dir="${copied_assets}" quiet="true"/>
+    </target>
+      
+</project>

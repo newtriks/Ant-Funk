@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!-- ======================================================================
+     Test Runner Script - Strip trace statements
+
+     Author: Newtriks <simon@newtriks.com>
+     
+     Date: 14th January 2010   
+     
+     Tests Run:
+     
+     - strip-traces
+     
+     Notes:
+     
+     - Install AntUnit http://ant.apache.org/antlibs/antunit/ 
+     - Build with AntUnit 1.1
+ 	 - Check that the implementing library exists in one of:
+        > /usr/share/ant/lib
+        > /Volumes/Users/[your username]/.ant/lib
+        > a directory added on the command line with the -lib argument
+
+     ====================================================================== -->
+
+<project name="antunit-base-test" default="run.strip-traces.test" 
+		 xmlns:au="antlib:org.apache.ant.antunit">
+
+    <!-- Load macrodef for stripping traces -->
+	<property name="strip.traces.macro" location="../macrodefs/strip-traces.xml"/>
+  	<import file="${strip.traces.macro}"/>
+    
+    <!-- Run test target initiate -->
+    <target name="run.strip-traces.test">
+        <au:antunit>
+            <fileset file="${ant.file}"/>
+            <au:plainlistener/>
+        </au:antunit>
+    </target>
+
+    <!-- Setup called prior to strip-traces test -->
+    <target name="setUp">
+        <property name="source_dir" value="source_dir"/>
+        <property name="temporary_dir" value="temporary_dir"/>
+        <mkdir dir="${source_dir}"/>
+        <echo file="${source_dir}/test.as">
+        <![CDATA[package{public class test{ public function test(){trace('test');}}}]]></echo>
+    </target>
+    
+    <!-- Test case for strip-traces -->
+    <target name="testStripTraces">
+        <au:assertResourceContains
+         resource="${source_dir}/test.as" value="trace('test');"/>
+        <strip.traces source="${source_dir}" temporary="${temporary_dir}" />
+        <au:assertResourceDoesntContain
+         resource="${temporary_dir}/test.as" value="trace('test');"/>
+    </target>
+    
+    <!-- Teardown called following strip-traces -->
+    <target name="tearDown">
+        <delete dir="${source_dir}" quiet="true"/>
+        <delete dir="${temporary_dir}" quiet="true"/>
+    </target> 
+      
+</project>
