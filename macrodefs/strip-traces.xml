@@ -2,10 +2,13 @@
 <!-- ======================================================================
      ANT Macrodef Build Script
 
-     - Strips trace/logging code
+     - Strips traces within code
 
      Author: Newtriks <simon@newtriks.com>
      Date :29th December 2009
+     
+     TODO: Ammend RegExp to handle trace statements that are not
+           terminated with a semi-colon.
 
      This script is based on code written by:
      
@@ -15,9 +18,9 @@
 <project>
 	    
 	<!-- = = = = = = = = = = = = = = = = =
-	     macrodef: strip.logging
+	     macrodef: strip.traces
 	     = = = = = = = = = = = = = = = = = -->
-	<macrodef name="strip.logging">
+	<macrodef name="strip.traces">
 	        
 		<attribute name="source" />
 	    <attribute name="temporary" />   
@@ -42,25 +45,8 @@
 						 includes="**/*.mxml"/>
 			
 			</replaceregexp>
-					
-			<!-- Strip Logging - Access to LOG constants -->
-			<replaceregexp	match="LOG[.].*?\);"
-							replace=""
-							flags="gs">
-						
-				<fileset dir="@{temporary}"
-						 includes="**/*.as"/>
 				
-				<fileset dir="@{temporary}"
-						 includes="**/*.mxml"/>
-			
-			</replaceregexp>		
-					
-			<delete dir="@{temporary}" 
-					failOnError="false"
-					includeEmptyDirs="true" />
-				
-		    <echo>Succesfully stripped all logging code</echo>
+		    <echo>Succesfully stripped all trace statements from @{source} to @{temporary}</echo>
 	        
 		</sequential>
 	
