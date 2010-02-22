@@ -7,7 +7,7 @@
      - Copies framework and rpc RSL's to specified directories
      - Compiles a third party libs swc
      - Copies third party libs swc to specified directories
-     - Cleans up all trace statements and logging from src
+     - Cleans up all trace statements and traces from src
      - Compiles release swf
      - Compiles module swf's
      - Creates html wrappers for release using SWFObject template
@@ -37,9 +37,9 @@
 	<property name="custom.lib.macro" location="ant/compile-custom-library.xml"/>
   	<import file="${custom.lib.macro}"/>
 
-	<!-- Load macrodef for stripping logging -->
-	<property name="strip.logging.macro" location="ant/strip-logging.xml"/>
-  	<import file="${strip.logging.macro}"/>
+	<!-- Load macrodef for stripping traces -->
+	<property name="strip.traces.macro" location="ant/strip-traces.xml"/>
+  	<import file="${strip.traces.macro}"/>
 
     <!-- Load macrodef for copying assets -->
 	<property name="copy.assets.macro" location="ant/copy-assets.xml"/>
@@ -69,7 +69,7 @@
 					 copy.flex.rsl,
 					 compile.integrated.lib,
 					 copy.integrated.rsl,
-					 strip.all.logging,
+					 strip.all.traces,
 					 compile.release,
 					 compile.modules,
 					 make.release.wrapper,
@@ -128,10 +128,10 @@
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - -
-	     target: strip.all.logging
+	     target: strip.all.traces
 	     - - - - - - - - - - - - - - - - - -->
-	<target name="strip.all.logging">
-	     <strip.logging source="${src.dir}" temporary="${temp.dir}" />
+	<target name="strip.all.traces">
+	     <strip.traces source="${src.dir}" temporary="${temp.dir}" />
 	</target>
 		
 	<!-- - - - - - - - - - - - - - - - - -
