@@ -28,6 +28,13 @@
     <target name="test.suite">
         <ant antfile="../tests/test-copy-assets.xml" /> 
         <ant antfile="../tests/test-strip-traces.xml" /> 
+		<ant antfile="../tests/test-git-init.xml" />
+		<ant antfile="../tests/test-git-checkout.xml" />
+		<ant antfile="../tests/test-git-commit.xml" />
+	 	<ant antfile="../tests/test-git-add.xml" />
+		<ant antfile="../tests/test-git-remote-add.xml" />
+		<ant antfile="../tests/test-git-push.xml" />
+		<!--<ant antfile="../tests/test-git-revision.xml" />-->
     </target>
   
 </project>

@@ -42,7 +42,8 @@
         <property name="temporary_dir" value="temporary_dir"/>
         <mkdir dir="${source_dir}"/>
         <echo file="${source_dir}/test.as">
-        <![CDATA[package{public class test{ public function test(){trace('test');}}}]]></echo>
+        <![CDATA[package{public class test{ public function test(){trace('test');}}}]]>
+        </echo>
     </target>
     
     <!-- Test case for strip-traces -->
