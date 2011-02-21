@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!-- ======================================================================
+     Flex ANT Build Script
+
+     - Deletes bin directory
+     - Creates bin directory
+     - Compiles a third party libs swc
+     
+     ** NOTES **
+
+     Each build will run the above tasks.
+
+     Author: Newtriks <simon@newtriks.com>
+     
+     Date :21st February 2011
+     
+     ====================================================================== -->
+<project name="${PROJECT.NAME}" default="build">
+	
+	
+    <!-- Load previously defined configuration properties file -->
+    <property file="build.properties" />
+		
+    <!-- Load macrodef for create third party library -->
+	<property name="custom.lib.macro" location="ant/macrodefs/compile-custom-library.xml"/>
+  	<import file="${custom.lib.macro}"/>
+	
+    <!-- flexTasks.jar copied to the libs folder to distribute with the project -->
+	<taskdef resource="flexTasks.tasks" classpath="${flex.tasks.jar}" />
+	
+	<!-- =================================
+	     target: build
+	     ================================= -->
+	<target name="build"
+			depends="clear,
+					 init,
+					 compile.integrated.lib"
+	            description="${PROJECT.FULLNAME}">
+    </target>
+	
+    <!-- - - - - - - - - - - - - - - - - -
+         target: clear
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clear">
+    	<tstamp>
+            <format property="build.datetime" pattern="dd/MM/yyyy hh:mm:ss aa" />
+        </tstamp>
+        <echo message="=============================================" />
+        <echo message="${PROJECT.NAME}-${PROJECT.VERSION} [${build.datetime}]" />
+        <echo message="Copyright (c) ${PROJECT.YEAR} ${PROJECT.OWNER}" />
+        <echo message="OS : ${os.name}" />
+        <echo message="Author: ${AUTHOR}" />
+        <echo message="==============================================" />
+        <delete dir="${lib.bin}" failonerror="false" />
+    </target>
+	
+    <!-- - - - - - - - - - - - - - - - - -
+	     target: init
+	     - - - - - - - - - - - - - - - - - -->
+	<target name="init">
+	    <mkdir dir="${lib.bin}" />
+	 </target>
+
+	<!-- - - - - - - - - - - - - - - - - -
+	     target: compile.integrated.lib
+	     - - - - - - - - - - - - - - - - - -->
+	<target name="compile.integrated.lib">
+		<comp.compile out="${lib.output.swc}"
+	                  link-report="${lib.report}" />
+    </target>
+	
+</project>

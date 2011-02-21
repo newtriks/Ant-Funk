@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!-- ======================================================================
+     ANT Macrodef Build Script
+
+     - Compiles a custom third party library swc
+
+     Author: Newtriks <simon@newtriks.com>
+     Date :21st February 2011
+     
+	====================================================================== -->
+<project>
+	    
+	<!-- = = = = = = = = = = = = = = = = =
+	     macrodef: comp.compile
+	     = = = = = = = = = = = = = = = = = -->
+	<macrodef name="comp.compile">
+	        
+	<attribute name="out" />
+	<attribute name="link-report" />
+	<attribute name="locale" default="en_US" />   
+	<attribute name="config" default="${flex.config.xml}" />
+	        
+	<sequential>
+	        	
+		<!-- Clean the output folder -->
+		<delete dir="@{out}" includes="*"/>
+				
+	    <!-- Compile the Third Party Library SWC -->
+		<compc output="@{out}"
+	           link-report="@{link-report}"
+	           locale="@{locale}"
+	           target-player="${swf.version.full}" >
+	                   
+	            <!-- Get default flex compiler options. -->
+	            <load-config filename="@{config}" />
+	                
+	            <!-- Libs src directory -->
+	            <compiler.source-path path-element="${lib.src}" />
+	                
+	            <!-- Externally linked Flex libraries -->
+				<compiler.external-library-path dir="${FLEX.SDK.FRAMEWORKS}" append="true">
+					<include name="libs/player/playerglobal.swc"/>
+					<include name="libs/datavisualization.swc" />
+					<include name="libs/framework.swc" />
+					<include name="libs/rpc.swc" />
+					<include name="libs/flex.swc" />
+					<include name="locale/${locale}/framework_rb.swc" />
+					<include name="locale/${locale}/rpc_rb.swc" />
+					<include name="locale/${locale}/datavisualization_rb.swc" />
+				</compiler.external-library-path>
+
+				<!-- Force include our SWC classes -->
+				<include-sources dir="${lib.newtriks}">
+					<include name="**/*.as"/>
+					<!--<include name="**/*.mxml"/>-->
+				</include-sources>
+					
+			</compc>
+				
+			<!-- Extract the SWF from the SWC for RSL purposes -->
+			<unzip src="@{out}" dest="${lib.bin}" >
+	        	<patternset>
+	        		<include name="library.swf" />
+	        	</patternset>
+	         </unzip>
+			
+			<echo>Successfully compiled Third Party Library SWC to @{out}</echo>
+	        
+		</sequential>
+	
+	</macrodef>
+	
+</project>
